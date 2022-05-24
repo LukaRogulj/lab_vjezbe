@@ -1,0 +1,188 @@
+﻿@page "/fetchdata"
+
+<PageTitle>Weather forecast</PageTitle>
+
+@using GUI.Data
+@using PaymentSlip.Model
+
+@inject WeatherForecastService ForecastService
+@inject SlipService slipService
+
+<h1>DataGrid InLine Editing</h1>
+
+<p>This page demonstrates how to configure the Razden Blazor DataGrid for inline editing</p>
+
+<RadzenButton Icon="add_circle_outline" style="margin-bottom: 10px" Text="Add New Order" Click="@InsertRow" Disabled=@(slipToInsert != null) />
+<RadzenDataGrid @ref="slipGrid" AllowFiltering="true" AllowPaging="true" PageSize="5" AllowSorting="true" EditMode="DataGridEditMode.Single"
+                Data="@slips" TItem="Slip" RowUpdate="@OnUpdateRow" RowCreate="@OnCreateRow">
+    <Columns>
+
+        <RadzenGridColumn TItem="Slip" Property="Id" Title="ID">
+
+        </RadzenGridColumn>
+
+        <RadzenGridColumn TItem="Slip" Property="PayerName" Title="PayerName">
+            <EditTemplate Context="slip">
+                <RadzenTextBox @bind-Value="slip.PayerName.ToString()" Style="width:100%; display: block" Name="PayerName" />
+                <RadzenRequiredValidator Text="PayerName is required" Component="PayerName" Popup="true" />
+            </EditTemplate>
+        </RadzenGridColumn>
+
+        <RadzenGridColumn TItem="Slip" Property="RecipientName" Title="RecipientName">
+            <EditTemplate Context="slip">
+                <RadzenTextBox @bind-Value="slip.RecipientName.ToString()" Style="width:100%; display: block" Name="RecipientName" />
+                <RadzenRequiredValidator Text="RecipientName is required" Component="RecipientName" Popup="true" />
+            </EditTemplate>
+        </RadzenGridColumn>
+
+        <RadzenGridColumn TItem="Slip" Property="Amount" Title="Amount">
+            <EditTemplate Context="slip">
+                <RadzenTextBox @bind-Value="slip.Amount.ToString()" Style="width:100%; display: block" Name="Amount" />
+                <RadzenRequiredValidator Text="Amount is required" Component="Amount" Popup="true" />
+            </EditTemplate>
+        </RadzenGridColumn>
+
+        <RadzenGridColumn TItem="Slip" Property="ReferencNumber" Title="ReferencNumber">
+            <EditTemplate Context="slip">
+                <RadzenTextBox @bind-Value="slip.ReferencNumber.ToString()" Style="width:100%; display: block" Name="ReferencNumber" />
+                <RadzenRequiredValidator Text="ReferencNumber is required" Component="ReferencNumber" Popup="true" />
+            </EditTemplate>
+        </RadzenGridColumn>
+
+        <RadzenDataGridColumn TItem="Slip" Context="sampleBlazorModelsSampleOrder" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="120px">
+            <Template Context="order">
+                <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Class="m-1" Click="@(args => EditRow(order))" @onclick:stopPropagation="true">
+                </RadzenButton>
+            </Template>
+            <EditTemplate Context="order">
+                <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Primary" Class="m-1" Click="@((args) => SaveRow(order))">
+                </RadzenButton>
+                <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Class="m-1" Click="@((args) => CancelEdit(order))">
+                </RadzenButton>
+            </EditTemplate>
+        </RadzenDataGridColumn>
+
+        <RadzenDataGridColumn TItem="Slip" Context="order" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="60px">
+            <Template Context="order">
+                <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Size="ButtonSize.Small" Class="m-1" Click="@(args => DeleteRow(order))" @onclick:stopPropagation="true">
+                </RadzenButton>
+            </Template>
+            <EditTemplate Context="order">
+                <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Size="ButtonSize.Small" Class="m-1" Click="@(args => DeleteRow(order))">
+                </RadzenButton>
+            </EditTemplate>
+        </RadzenDataGridColumn>
+
+    </Columns>
+</RadzenDataGrid>
+
+@code {
+
+    RadzenDataGrid<Slip> slipGrid;
+    IEnumerable<Slip> slips;
+
+    protected override async Task OnInitializedAsync()
+    {
+        slips = await Task.Run(() => slipService.SlipList());
+    }
+
+    async Task EditRow(Slip order)
+    {
+        await slipGrid.EditRow(order);
+    }
+
+    void OnUpdateRow(Slip order)
+    {
+        if (order == orderToInsert)
+        {
+            orderToInsert = null;
+        }
+
+        slipService.PutSlipAsync(order);
+
+        // For demo purposes only
+        //order.Customer = dbContext.Customers.Find(order.CustomerID);
+        //order.Employee = dbContext.Employees.Find(order.EmployeeID);
+
+        // For production
+        //dbContext.SaveChanges();
+    }
+
+    async Task SaveRow(Slip order)
+    {
+        if (order == orderToInsert)
+        {
+            orderToInsert = null;
+        }
+
+        await slipGrid.UpdateRow(order);
+
+        slipService.PostSlipAsync(order);
+    }
+
+    void CancelEdit(Slip order)
+    {
+        if (order == orderToInsert)
+        {
+            orderToInsert = null;
+        }
+
+        slipGrid.CancelEditRow(order);
+
+
+        // For production
+        //var orderEntry = dbContext.Entry(order);
+        //if (orderEntry.State == EntityState.Modified)
+        //{
+        //    orderEntry.CurrentValues.SetValues(orderEntry.OriginalValues);
+        //    orderEntry.State = EntityState.Unchanged;
+        //}
+    }
+
+    async Task DeleteRow(Slip order)
+    {
+        if (order == orderToInsert)
+        {
+            orderToInsert = null;
+        }
+
+        if (slips.Contains(order))
+        {
+            slipService.DeleteSlipAsync(order);
+            // For demo purposes only
+
+            // slips.Remove(order);
+
+            // For production
+            //dbContext.SaveChanges();
+
+            await slipGrid.Reload();
+        }
+        else
+        {
+            slipGrid.CancelEditRow(order);
+        }
+    }
+
+    Slip slipToInsert;
+
+    async Task InsertRow()
+    {
+        slipToInsert = new Slip();
+        await slipGrid.InsertRow(slipToInsert);
+    }
+
+    void OnCreateRow(Slip order)
+    {
+        slipService.PostSlipAsync(order);
+
+        //dbContext.Add(order);
+
+        //// For demo purposes only
+        //order.Customer = dbContext.Customers.Find(order.CustomerID);
+        //order.Employee = dbContext.Employees.Find(order.EmployeeID);
+
+        // For production
+        //dbContext.SaveChanges();
+    }
+}

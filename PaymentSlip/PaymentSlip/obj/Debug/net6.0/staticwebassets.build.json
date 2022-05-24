@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "r88s94EZZuwfm17s3MsF494+YLZPFyD6ieX6ewjImJ0=",
+  "Source": "PaymentSlip",
+  "BasePath": "_content/PaymentSlip",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

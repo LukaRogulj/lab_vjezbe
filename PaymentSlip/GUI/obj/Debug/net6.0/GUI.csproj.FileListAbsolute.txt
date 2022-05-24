@@ -1,0 +1,9 @@
+C:\Users\Luka\source\repos\PaymentSlip\GUI\obj\Debug\net6.0\GUI.csproj.AssemblyReference.cache
+C:\Users\Luka\source\repos\PaymentSlip\GUI\obj\Debug\net6.0\GUI.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Luka\source\repos\PaymentSlip\GUI\obj\Debug\net6.0\GUI.AssemblyInfoInputs.cache
+C:\Users\Luka\source\repos\PaymentSlip\GUI\obj\Debug\net6.0\GUI.AssemblyInfo.cs
+C:\Users\Luka\source\repos\PaymentSlip\GUI\obj\Debug\net6.0\GUI.csproj.CoreCompileInputs.cache
+C:\Users\Luka\source\repos\PaymentSlip\GUI\obj\Debug\net6.0\GUI.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\Luka\source\repos\PaymentSlip\GUI\obj\Debug\net6.0\GUI.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\Luka\source\repos\PaymentSlip\GUI\obj\Debug\net6.0\GUI.RazorAssemblyInfo.cache
+C:\Users\Luka\source\repos\PaymentSlip\GUI\obj\Debug\net6.0\GUI.RazorAssemblyInfo.cs
